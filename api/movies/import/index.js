@@ -1,25 +1,32 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 
-// Check if DATABASE_URL is set
-if (!process.env.DATABASE_URL) {
-  console.error('DATABASE_URL environment variable is not set');
-}
-
 // OMDb API key - should be set in Vercel environment variables
-const OMDB_API_KEY = process.env.OMDB_API_KEY || 'fb33bf5'; // Fallback to provided key
+// Get your free API key from http://www.omdbapi.com/apikey.aspx
+const OMDB_API_KEY = process.env.OMDB_API_KEY || 'fb33bf5'; // Fallback to provided key (may be rate-limited)
 const OMDB_API_URL = 'https://www.omdbapi.com/'; // Use HTTPS for security
 
-// Create a connection pool (reuse from main API if possible, but separate for modularity)
-const pool = process.env.DATABASE_URL ? new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false // Required for Neon PostgreSQL
-  },
-  max: 2,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000
-}) : null;
+// Create a connection pool
+let pool = null;
+
+try {
+  if (process.env.DATABASE_URL) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false // Required for Neon PostgreSQL
+      },
+      max: 2,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000
+    });
+  } else {
+    console.error('DATABASE_URL environment variable is not set');
+  }
+} catch (error) {
+  console.error('Error creating database pool:', error);
+  pool = null;
+}
 
 /**
  * Extract IMDb ID from various link formats:
@@ -65,12 +72,19 @@ async function fetchFromOmdb(imdbId) {
     const response = await fetch(url);
     
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('OMDb API key is invalid or missing. Please set OMDB_API_KEY in Vercel environment variables.');
+      }
       throw new Error(`OMDb API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
 
     if (data.Response === 'False') {
+      // Check if it's an API key error
+      if (data.Error && data.Error.includes('API key')) {
+        throw new Error('OMDb API key is invalid or missing. Please set OMDB_API_KEY in Vercel environment variables.');
+      }
       throw new Error(data.Error || 'Movie not found in OMDb');
     }
 
@@ -178,91 +192,101 @@ async function saveMovieToDb(movieData) {
 
 // Main handler
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Only allow POST
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
-  }
-
-  // Check if database is configured
-  if (!process.env.DATABASE_URL || !pool) {
-    console.error('DATABASE_URL is not configured');
-    return res.status(500).json({ 
-      error: 'Database configuration error',
-      message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel project settings.'
-    });
-  }
-
+  // Ensure we always return JSON
   try {
-    // Validate request body
-    const { imdbLink } = req.body;
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
 
-    if (!imdbLink) {
-      return res.status(400).json({ 
-        error: 'Missing required field',
-        message: 'imdbLink is required in request body'
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+
+    // Only allow POST
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+    }
+
+    // Check if database is configured
+    if (!process.env.DATABASE_URL || !pool) {
+      console.error('DATABASE_URL is not configured');
+      return res.status(500).json({ 
+        error: 'Database configuration error',
+        message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel project settings.'
       });
     }
 
-    // Extract IMDb ID
-    const imdbId = extractImdbId(imdbLink);
-
-    if (!imdbId) {
-      return res.status(400).json({ 
-        error: 'Invalid IMDb link',
-        message: 'Could not extract IMDb ID from the provided link. Please provide a valid IMDb URL or ID (e.g., tt3896198)'
-      });
-    }
-
-    // Fetch data from OMDb API
-    let omdbData;
     try {
-      omdbData = await fetchFromOmdb(imdbId);
+      // Validate request body
+      const { imdbLink } = req.body;
+
+      if (!imdbLink) {
+        return res.status(400).json({ 
+          error: 'Missing required field',
+          message: 'imdbLink is required in request body'
+        });
+      }
+
+      // Extract IMDb ID
+      const imdbId = extractImdbId(imdbLink);
+
+      if (!imdbId) {
+        return res.status(400).json({ 
+          error: 'Invalid IMDb link',
+          message: 'Could not extract IMDb ID from the provided link. Please provide a valid IMDb URL or ID (e.g., tt3896198)'
+        });
+      }
+
+      // Fetch data from OMDb API
+      let omdbData;
+      try {
+        omdbData = await fetchFromOmdb(imdbId);
+      } catch (error) {
+        return res.status(404).json({ 
+          error: 'Movie not found',
+          message: error.message || 'Could not fetch movie data from OMDb API'
+        });
+      }
+
+      // Map OMDb data to our schema
+      const movieData = mapOmdbToMovie(omdbData);
+
+      // Check if movie already exists (optional - you can remove this if you want duplicates)
+      const exists = await movieExists(movieData.title);
+      if (exists) {
+        return res.status(409).json({ 
+          error: 'Movie already exists',
+          message: `A movie with the title "${movieData.title}" already exists in the database`
+        });
+      }
+
+      // Save to database
+      const savedMovie = await saveMovieToDb(movieData);
+
+      return res.status(201).json({
+        message: 'Movie imported successfully',
+        movie: savedMovie
+      });
+
     } catch (error) {
-      return res.status(404).json({ 
-        error: 'Movie not found',
-        message: error.message || 'Could not fetch movie data from OMDb API'
+      console.error('Error in import handler:', error);
+      
+      const isDev = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development';
+      
+      return res.status(500).json({ 
+        error: 'Internal server error',
+        message: isDev ? error.message : 'Failed to import movie. Please try again.'
       });
     }
-
-    // Map OMDb data to our schema
-    const movieData = mapOmdbToMovie(omdbData);
-
-    // Check if movie already exists (optional - you can remove this if you want duplicates)
-    const exists = await movieExists(movieData.title);
-    if (exists) {
-      return res.status(409).json({ 
-        error: 'Movie already exists',
-        message: `A movie with the title "${movieData.title}" already exists in the database`
-      });
-    }
-
-    // Save to database
-    const savedMovie = await saveMovieToDb(movieData);
-
-    return res.status(201).json({
-      message: 'Movie imported successfully',
-      movie: savedMovie
-    });
-
   } catch (error) {
-    console.error('Error in import handler:', error);
-    
-    const isDev = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development';
-    
-    return res.status(500).json({ 
+    // Top-level error handler - ensure we always return JSON
+    console.error('Unexpected error in import handler:', error);
+    return res.status(500).json({
       error: 'Internal server error',
-      message: isDev ? error.message : 'Failed to import movie. Please try again.'
+      message: 'An unexpected error occurred'
     });
   }
 }
-
