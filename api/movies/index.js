@@ -1,10 +1,15 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 
+// Check if DATABASE_URL is set
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL environment variable is not set');
+}
+
 // Create a connection pool
 // DATABASE_URL is automatically available from Vercel environment variables
 // Pool is created at module level to be reused across serverless function invocations
-const pool = new Pool({
+const pool = process.env.DATABASE_URL ? new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false // Required for Neon PostgreSQL
@@ -13,14 +18,17 @@ const pool = new Pool({
   max: 2, // Small pool for serverless function instances
   idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
   connectionTimeoutMillis: 10000 // Fail fast if connection takes too long
-});
+}) : null;
 
 // Helper function to handle database errors
 function handleError(error, res) {
   console.error('Database error:', error);
+  const isDev = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development';
+  
   return res.status(500).json({ 
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    message: isDev ? error.message : undefined,
+    details: isDev ? error.stack : undefined
   });
 }
 
@@ -33,6 +41,15 @@ export default async function handler(req, res) {
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Check if database is configured
+  if (!process.env.DATABASE_URL || !pool) {
+    console.error('DATABASE_URL is not configured');
+    return res.status(500).json({ 
+      error: 'Database configuration error',
+      message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel project settings.'
+    });
   }
 
   try {
@@ -72,14 +89,39 @@ async function handleGet(req, res) {
       ORDER BY created_at DESC`
     );
 
-    // Parse genre array from JSON string
-    const movies = result.rows.map(row => ({
-      ...row,
-      genre: Array.isArray(row.genre) ? row.genre : (row.genre ? JSON.parse(row.genre) : [])
-    }));
+    // Parse genre array from JSON string or JSONB
+    const movies = result.rows.map(row => {
+      let genre = [];
+      if (row.genre) {
+        if (Array.isArray(row.genre)) {
+          genre = row.genre;
+        } else if (typeof row.genre === 'string') {
+          try {
+            genre = JSON.parse(row.genre);
+          } catch (e) {
+            console.warn('Failed to parse genre:', row.genre);
+            genre = [];
+          }
+        } else {
+          genre = row.genre;
+        }
+      }
+      return {
+        ...row,
+        genre: Array.isArray(genre) ? genre : []
+      };
+    });
 
     return res.status(200).json(movies);
   } catch (error) {
+    console.error('Error in handleGet:', error);
+    // Check if table doesn't exist
+    if (error.message && error.message.includes('does not exist')) {
+      return res.status(500).json({ 
+        error: 'Database table not found',
+        message: 'The movies table does not exist. Please run the SQL schema from database/schema.sql in your Neon database.'
+      });
+    }
     return handleError(error, res);
   }
 }
