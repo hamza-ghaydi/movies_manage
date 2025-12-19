@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
 import MovieList from './components/MovieList';
+import ImdbImport from './components/ImdbImport';
 import { fetchMovies, createMovie, updateMovie, deleteMovie } from './utils/api';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Film } from 'lucide-react';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImdbImportOpen, setIsImdbImportOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -137,6 +139,11 @@ function App() {
     }
   };
 
+  const handleImdbImportSuccess = async (importedMovie) => {
+    // Refresh the movie list to include the newly imported movie
+    await loadMovies();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -145,13 +152,22 @@ function App() {
             My Movie & Series Collection
           </h1>
           <p className="text-gray-600 mb-6">Track what you've watched and discover what's next</p>
-          <button
-            onClick={() => setIsFormOpen(true)}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
-          >
-            <Plus size={20} />
-            Add New Movie
-          </button>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            >
+              <Plus size={20} />
+              Add New Movie
+            </button>
+            <button
+              onClick={() => setIsImdbImportOpen(true)}
+              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            >
+              <Film size={20} />
+              Import from IMDb
+            </button>
+          </div>
         </header>
 
         {error && (
@@ -177,6 +193,12 @@ function App() {
               isOpen={isFormOpen}
               onClose={() => setIsFormOpen(false)}
               onAddMovie={handleAddMovie}
+            />
+
+            <ImdbImport
+              isOpen={isImdbImportOpen}
+              onClose={() => setIsImdbImportOpen(false)}
+              onImportSuccess={handleImdbImportSuccess}
             />
 
             <MovieList
