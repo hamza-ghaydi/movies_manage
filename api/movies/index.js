@@ -1,4 +1,3 @@
-import pkg from 'pg';
 const { Pool } = pkg;
 
 // Check if DATABASE_URL is set

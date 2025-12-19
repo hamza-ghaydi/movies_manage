@@ -141,6 +141,42 @@ export async function deleteMovie(id) {
 }
 
 /**
+ * Import a movie from IMDb using OMDb API
+ * @param {string} imdbLink - IMDb URL or ID (e.g., "https://www.imdb.com/title/tt3896198/" or "tt3896198")
+ * @returns {Promise<Object>} Imported movie object with message
+ * 
+ * @example
+ * // Import by full URL
+ * const result = await importMovieFromImdb("https://www.imdb.com/title/tt3896198/");
+ * console.log(result.message); // "Movie imported successfully"
+ * console.log(result.movie); // The imported movie object
+ * 
+ * // Import by IMDb ID
+ * const result = await importMovieFromImdb("tt3896198");
+ */
+export async function importMovieFromImdb(imdbLink) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/movies/import`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imdbLink }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || error.error || `HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error importing movie from IMDb:', error);
+    throw error;
+  }
+}
+
+/**
  * Example: Complete CRUD operations usage
  * 
  * // 1. GET - Fetch all movies
