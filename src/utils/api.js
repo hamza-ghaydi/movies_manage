@@ -38,8 +38,30 @@ export async function fetchMovies() {
     const response = await fetch(`${API_BASE_URL}/movies`);
     
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || `HTTP error! status: ${response.status}`);
+      // Try to parse JSON error, but handle non-JSON responses
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const error = await response.json();
+          errorMessage = error.error || error.message || errorMessage;
+        } else {
+          // If not JSON, get text response
+          const text = await response.text();
+          errorMessage = text || errorMessage;
+        }
+      } catch (parseError) {
+        // If parsing fails, use default message
+        console.error('Error parsing error response:', parseError);
+      }
+      throw new Error(errorMessage);
+    }
+    
+    // Ensure response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`Expected JSON but got ${contentType}. Response: ${text.substring(0, 100)}`);
     }
     
     return await response.json();

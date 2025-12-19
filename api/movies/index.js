@@ -1,23 +1,30 @@
+import pkg from 'pg';
 const { Pool } = pkg;
-
-// Check if DATABASE_URL is set
-if (!process.env.DATABASE_URL) {
-  console.error('DATABASE_URL environment variable is not set');
-}
 
 // Create a connection pool
 // DATABASE_URL is automatically available from Vercel environment variables
 // Pool is created at module level to be reused across serverless function invocations
-const pool = process.env.DATABASE_URL ? new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false // Required for Neon PostgreSQL
-  },
-  // Optimize for serverless: fewer connections, shorter idle timeout
-  max: 2, // Small pool for serverless function instances
-  idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-  connectionTimeoutMillis: 10000 // Fail fast if connection takes too long
-}) : null;
+let pool = null;
+
+try {
+  if (process.env.DATABASE_URL) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false // Required for Neon PostgreSQL
+      },
+      // Optimize for serverless: fewer connections, shorter idle timeout
+      max: 2, // Small pool for serverless function instances
+      idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
+      connectionTimeoutMillis: 10000 // Fail fast if connection takes too long
+    });
+  } else {
+    console.error('DATABASE_URL environment variable is not set');
+  }
+} catch (error) {
+  console.error('Error creating database pool:', error);
+  pool = null;
+}
 
 // Helper function to handle database errors
 function handleError(error, res) {
@@ -32,40 +39,51 @@ function handleError(error, res) {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Check if database is configured
-  if (!process.env.DATABASE_URL || !pool) {
-    console.error('DATABASE_URL is not configured');
-    return res.status(500).json({ 
-      error: 'Database configuration error',
-      message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel project settings.'
-    });
-  }
-
+  // Ensure we always return JSON, even on unexpected errors
   try {
-    switch (req.method) {
-      case 'GET':
-        return await handleGet(req, res);
-      case 'POST':
-        return await handlePost(req, res);
-      case 'PUT':
-        return await handlePut(req, res);
-      case 'DELETE':
-        return await handleDelete(req, res);
-      default:
-        return res.status(405).json({ error: 'Method not allowed' });
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+
+    // Check if database is configured
+    if (!process.env.DATABASE_URL || !pool) {
+      console.error('DATABASE_URL is not configured');
+      return res.status(500).json({ 
+        error: 'Database configuration error',
+        message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel project settings.'
+      });
+    }
+
+    try {
+      switch (req.method) {
+        case 'GET':
+          return await handleGet(req, res);
+        case 'POST':
+          return await handlePost(req, res);
+        case 'PUT':
+          return await handlePut(req, res);
+        case 'DELETE':
+          return await handleDelete(req, res);
+        default:
+          return res.status(405).json({ error: 'Method not allowed' });
+      }
+    } catch (error) {
+      return handleError(error, res);
     }
   } catch (error) {
-    return handleError(error, res);
+    // Top-level error handler - ensure we always return JSON
+    console.error('Unexpected error in handler:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'An unexpected error occurred'
+    });
   }
 }
 
