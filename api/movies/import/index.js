@@ -119,6 +119,9 @@ function mapOmdbToMovie(omdbData) {
   // Use Plot as initial review, or empty string
   const review = omdbData.Plot && omdbData.Plot !== 'N/A' ? omdbData.Plot : '';
 
+  // Get poster URL from OMDb API (Poster field)
+  const poster = omdbData.Poster && omdbData.Poster !== 'N/A' ? omdbData.Poster : null;
+
   return {
     title: omdbData.Title || 'Untitled',
     type: type,
@@ -126,7 +129,8 @@ function mapOmdbToMovie(omdbData) {
     watched: false, // Default to unwatched
     priority: 3, // Default priority
     rating: rating,
-    review: review
+    review: review,
+    poster: poster
   };
 }
 
@@ -152,8 +156,8 @@ async function movieExists(title) {
 async function saveMovieToDb(movieData) {
   try {
     const result = await pool.query(
-      `INSERT INTO movies (title, type, genre, watched, priority, rating, review)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO movies (title, type, genre, watched, priority, rating, review, poster)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING 
          id,
          title,
@@ -163,6 +167,7 @@ async function saveMovieToDb(movieData) {
          priority,
          rating,
          review,
+         poster,
          created_at,
          updated_at`,
       [
@@ -172,7 +177,8 @@ async function saveMovieToDb(movieData) {
         movieData.watched,
         movieData.priority,
         movieData.rating,
-        movieData.review
+        movieData.review,
+        movieData.poster
       ]
     );
 

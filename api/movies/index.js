@@ -100,6 +100,7 @@ async function handleGet(req, res) {
         priority,
         rating,
         review,
+        poster,
         created_at,
         updated_at
       FROM movies 
@@ -166,9 +167,10 @@ async function handlePost(req, res) {
     }
 
     // Insert movie with parameterized query
+    const { poster } = req.body;
     const result = await pool.query(
-      `INSERT INTO movies (title, type, genre, watched, priority, rating, review)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO movies (title, type, genre, watched, priority, rating, review, poster)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING 
          id,
          title,
@@ -178,6 +180,7 @@ async function handlePost(req, res) {
          priority,
          rating,
          review,
+         poster,
          created_at,
          updated_at`,
       [
@@ -187,7 +190,8 @@ async function handlePost(req, res) {
         false, // watched defaults to false
         priority || 3,
         rating || null,
-        review || ''
+        review || '',
+        poster || null
       ]
     );
 
@@ -268,6 +272,7 @@ async function handlePut(req, res) {
          priority,
          rating,
          review,
+         poster,
          created_at,
          updated_at`,
       values

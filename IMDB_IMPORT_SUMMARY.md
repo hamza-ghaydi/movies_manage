@@ -207,3 +207,4 @@ console.log(result.movie);
 - **API Examples**: See `API_EXAMPLES.md`
 - **Troubleshooting**: See `TROUBLESHOOTING.md`
 
+

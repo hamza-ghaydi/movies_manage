@@ -95,3 +95,4 @@ The free OMDb API key gives you:
 
 If you need more, consider upgrading to a paid plan.
 
+

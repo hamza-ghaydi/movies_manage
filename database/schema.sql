@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS movies (
   priority INTEGER DEFAULT 3 CHECK (priority >= 1 AND priority <= 5),
   rating INTEGER CHECK (rating IS NULL OR (rating >= 1 AND rating <= 10)),
   review TEXT DEFAULT '',
+  poster TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -39,8 +40,11 @@ CREATE TRIGGER update_movies_updated_at
   FOR EACH ROW 
   EXECUTE FUNCTION update_updated_at_column();
 
+-- Add poster column to existing tables (run this if table already exists)
+-- ALTER TABLE movies ADD COLUMN IF NOT EXISTS poster TEXT;
+
 -- Example insert (optional - for testing)
--- INSERT INTO movies (title, type, genre, watched, priority, rating, review)
+-- INSERT INTO movies (title, type, genre, watched, priority, rating, review, poster)
 -- VALUES (
 --   'The Shawshank Redemption',
 --   'movie',
@@ -48,6 +52,7 @@ CREATE TRIGGER update_movies_updated_at
 --   true,
 --   5,
 --   9,
---   'An inspiring story about hope and friendship. One of the best movies ever made.'
+--   'An inspiring story about hope and friendship. One of the best movies ever made.',
+--   'https://example.com/poster.jpg'
 -- );
 

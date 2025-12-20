@@ -31,15 +31,42 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete }) {
     <div className={`bg-white rounded-lg shadow-md p-5 transition-all duration-200 hover:shadow-lg ${
       movie.watched ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-300'
     }`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            {movie.type === 'movie' ? (
-              <Film size={20} className="text-blue-600" />
-            ) : (
-              <Tv size={20} className="text-purple-600" />
-            )}
-            <h3 className="text-xl font-bold text-gray-800">{movie.title}</h3>
+      <div className="flex gap-4 mb-3">
+        {/* Poster Image */}
+        {movie.poster && (
+          <div className="flex-shrink-0">
+            <img 
+              src={movie.poster} 
+              alt={`${movie.title} poster`}
+              className="w-32 h-48 object-cover rounded-md shadow-sm"
+              onError={(e) => {
+                // Hide image if it fails to load
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                {movie.type === 'movie' ? (
+                  <Film size={20} className="text-blue-600" />
+                ) : (
+                  <Tv size={20} className="text-purple-600" />
+                )}
+                <h3 className="text-xl font-bold text-gray-800">{movie.title}</h3>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onDelete(movie.id)}
+              className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+              title="Delete"
+            >
+              <X size={20} />
+            </button>
           </div>
 
           {movie.genre.length > 0 && (
@@ -55,14 +82,6 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete }) {
             </div>
           )}
         </div>
-
-        <button
-          onClick={() => onDelete(movie.id)}
-          className="text-gray-400 hover:text-red-500 transition-colors"
-          title="Delete"
-        >
-          <X size={20} />
-        </button>
       </div>
 
       <div className="flex items-center gap-4 mb-3">
