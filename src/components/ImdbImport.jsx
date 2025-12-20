@@ -44,7 +44,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/5 80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full">
         <div className="flex items-center rounded-t-2xl justify-between sticky top-0 glass p-6">
           <div className="flex items-center gap-3">
@@ -79,7 +79,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
           </div>
 
           {error && (
-            <div className="mb-4 bg-[#831010] bg-opacity-50 border border-[#db0000] text-white px-4 py-3 rounded-xl">
+            <div className="mb-4 bg-blue-950/90 hover:bg-blue-950/90 text-white px-4 py-3 rounded-xl">
               <p className="font-semibold">Error:</p>
               <p className="text-sm">{error}</p>
             </div>

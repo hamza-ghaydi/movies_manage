@@ -1,4 +1,5 @@
 import { Home, CheckCircle, Clock, Film } from 'lucide-react';
+import { images } from '../constants/images';
 
 function Sidebar({ activeView, onViewChange }) {
   const navItems = [
@@ -12,7 +13,7 @@ function Sidebar({ activeView, onViewChange }) {
       {/* Logo */}
       <div className="p-6 border-b border-white/30 border-opacity-15">
         <div className="flex items-center justify-center">
-          <img src="../assets/logo.png" alt="logo" className="w-10 h-10" />
+          <img src={images.logo} alt="logo" className="w-25" />
         </div>
       </div>
 

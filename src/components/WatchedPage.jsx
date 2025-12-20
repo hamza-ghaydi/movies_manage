@@ -49,14 +49,14 @@ function WatchedPage({ movies, onToggleWatched, onUpdateReview, onDelete }) {
       </div>
 
       {/* Filters */}
-      <div className="glass rounded-xl p-4">
-        <div className="flex flex-wrap gap-4">
-          <div>
+      <div className="glass  rounded-xl p-4">
+        <div className="flex  gap-4">
+          <div className="w-1/3">
             <label className="block text-sm text-[#564d4d] mb-2">Type</label>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-4 py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
+              className="px-4 w-full py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
             >
               <option value="all" className="bg-black">All</option>
               <option value="movie" className="bg-black">Movies</option>
@@ -64,12 +64,12 @@ function WatchedPage({ movies, onToggleWatched, onUpdateReview, onDelete }) {
             </select>
           </div>
 
-          <div>
+          <div className="w-1/3">
             <label className="block text-sm text-[#564d4d] mb-2">Genre</label>
             <select
               value={genreFilter}
               onChange={(e) => setGenreFilter(e.target.value)}
-              className="px-4 py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
+              className="px-4 w-full py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
             >
               <option value="all" className="bg-black">All Genres</option>
               {allGenres.map(genre => (
@@ -78,12 +78,12 @@ function WatchedPage({ movies, onToggleWatched, onUpdateReview, onDelete }) {
             </select>
           </div>
 
-          <div>
+          <div className="w-1/3">
             <label className="block text-sm text-[#564d4d] mb-2">Rating</label>
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(e.target.value)}
-              className="px-4 py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
+              className="px-4 w-full py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
             >
               <option value="all" className="bg-black">All Ratings</option>
               <option value="rated" className="bg-black">Rated</option>

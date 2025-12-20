@@ -61,9 +61,9 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
           <h2 className="text-2xl font-bold text-white">Add New Movie or Series</h2>
           <button
             onClick={onClose}
-            className="text-[#564d4d] hover:text-white transition-colors"
+            className="text-[#564d4d] hover:text-white transition-colors cursor-pointer"
           >
-            <X size={24} />
+            <X size={24}  />
           </button>
         </div>
 
@@ -164,7 +164,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              className="flex-1 bg-[#db0000] hover:bg-[#b80000] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+              className="flex-1 bg-blue-950/90 hover:bg-blue-950/90 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
             >
               <Plus size={20} />
               Add to Collection
@@ -172,7 +172,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-[#564d4d] hover:bg-[#6b5f5f] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
+              className="flex-1 bg-[#4d4d56] hover:bg-[#3b3c47] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
             >
               Cancel
             </button>

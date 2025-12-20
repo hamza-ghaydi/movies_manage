@@ -83,7 +83,7 @@ function HomePage({
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex-1 w-full md:w-auto">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30" size={20}  />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30  " size={20} color="white"  />
             <input
               type="text"
               placeholder="Search movies, series, genres..."
