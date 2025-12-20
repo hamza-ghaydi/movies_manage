@@ -44,16 +44,16 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full">
-        <div className="flex items-center justify-between sticky top-0 bg-white border-b border-gray-200 p-6">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full">
+        <div className="flex items-center rounded-t-2xl justify-between sticky top-0 glass p-6">
           <div className="flex items-center gap-3">
-            <Film size={24} className="text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-800">Import from IMDb</h2>
+            <Film size={24} className="text-blue-700" />
+            <h2 className="text-2xl font-bold text-white">Import from IMDb</h2>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-white/70 hover:text-white transition-colors"
             disabled={loading}
           >
             <X size={24} />
@@ -62,7 +62,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
 
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               IMDb Link or ID
             </label>
             <input
@@ -70,16 +70,16 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
               value={imdbLink}
               onChange={(e) => setImdbLink(e.target.value)}
               placeholder="https://www.imdb.com/title/tt3896198/ or tt3896198"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 glass rounded-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
               disabled={loading}
             />
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-white/70">
               Enter an IMDb URL or just the ID (e.g., tt3896198)
             </p>
           </div>
 
           {error && (
-            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="mb-4 bg-[#831010] bg-opacity-50 border border-[#db0000] text-white px-4 py-3 rounded-xl">
               <p className="font-semibold">Error:</p>
               <p className="text-sm">{error}</p>
             </div>
@@ -89,7 +89,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
             <button
               type="submit"
               disabled={loading || !imdbLink.trim()}
-              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 bg-blue-700/90 hover:bg-blue-700/90 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100"
             >
               {loading ? (
                 <>
@@ -107,7 +107,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
               type="button"
               onClick={handleClose}
               disabled={loading}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-4 rounded-md transition duration-200 disabled:opacity-50"
+              className="flex-1 bg-gray-700/50 hover:bg-[#6b5f5f] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50"
             >
               Cancel
             </button>

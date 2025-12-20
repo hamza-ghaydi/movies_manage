@@ -55,13 +55,13 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between sticky top-0 bg-white border-b border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-800">Add New Movie or Series</h2>
+    <div className="fixed inset-0 bg-black/5 bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between sticky top-0 glass border-b border-[#db0000] border-opacity-20 p-6">
+          <h2 className="text-2xl font-bold text-white">Add New Movie or Series</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-[#564d4d] hover:text-white transition-colors"
           >
             <X size={24} />
           </button>
@@ -70,7 +70,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Title *
               </label>
               <input
@@ -78,28 +78,28 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 glass-light rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
                 placeholder="Enter title"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Type
               </label>
               <select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
               >
-                <option value="movie">Movie</option>
-                <option value="series">Series</option>
+                <option value="movie" className="bg-black">Movie</option>
+                <option value="series" className="bg-black">Series</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Genre (comma separated)
               </label>
               <input
@@ -107,31 +107,31 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
                 name="genre"
                 value={formData.genre}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 glass-light rounded-xl text-white placeholder-[#564d4d] focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
                 placeholder="e.g. Action, Drama, Sci-Fi"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Priority (1-5)
               </label>
               <select
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 glass-light rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
               >
-                <option value="1">1 - Low</option>
-                <option value="2">2</option>
-                <option value="3">3 - Medium</option>
-                <option value="4">4</option>
-                <option value="5">5 - High</option>
+                <option value="1" className="bg-black">1 - Low</option>
+                <option value="2" className="bg-black">2</option>
+                <option value="3" className="bg-black">3 - Medium</option>
+                <option value="4" className="bg-black">4</option>
+                <option value="5" className="bg-black">5 - High</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Rating (1-10, optional)
               </label>
               <input
@@ -141,14 +141,14 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
                 onChange={handleChange}
                 min="1"
                 max="10"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 glass-light rounded-xl text-white placeholder-[#564d4d] focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
                 placeholder="1-10"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Review
             </label>
             <textarea
@@ -156,7 +156,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
               value={formData.review}
               onChange={handleChange}
               rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 glass-light rounded-xl text-white placeholder-[#564d4d] focus:outline-none focus:ring-2 focus:ring-[#db0000] focus:border-[#db0000] focus:border-opacity-40"
               placeholder="Write your thoughts..."
             />
           </div>
@@ -164,7 +164,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2"
+              className="flex-1 bg-[#db0000] hover:bg-[#b80000] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
             >
               <Plus size={20} />
               Add to Collection
@@ -172,7 +172,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md transition duration-200"
+              className="flex-1 bg-[#564d4d] hover:bg-[#6b5f5f] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
             >
               Cancel
             </button>

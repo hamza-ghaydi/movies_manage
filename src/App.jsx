@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import MovieForm from './components/MovieForm';
-import MovieList from './components/MovieList';
 import ImdbImport from './components/ImdbImport';
+import Sidebar from './components/Sidebar';
+import HomePage from './components/HomePage';
+import WatchedPage from './components/WatchedPage';
+import ToWatchPage from './components/ToWatchPage';
 import { fetchMovies, createMovie, updateMovie, deleteMovie } from './utils/api';
-import { Plus, Loader2, Film } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [activeView, setActiveView] = useState('home');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isImdbImportOpen, setIsImdbImportOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -144,71 +148,86 @@ function App() {
     await loadMovies();
   };
 
+  const renderView = () => {
+    switch (activeView) {
+      case 'home':
+        return (
+          <HomePage
+            movies={movies}
+            onToggleWatched={handleToggleWatched}
+            onUpdateReview={handleUpdateReview}
+            onDelete={handleDelete}
+            onAddMovieClick={() => setIsFormOpen(true)}
+            onImportClick={() => setIsImdbImportOpen(true)}
+          />
+        );
+      case 'watched':
+        return (
+          <WatchedPage
+            movies={movies}
+            onToggleWatched={handleToggleWatched}
+            onUpdateReview={handleUpdateReview}
+            onDelete={handleDelete}
+          />
+        );
+      case 'toWatch':
+        return (
+          <ToWatchPage
+            movies={movies}
+            onToggleWatched={handleToggleWatched}
+            onUpdateReview={handleUpdateReview}
+            onDelete={handleDelete}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
-            My Movie & Series Collection
-          </h1>
-          <p className="text-gray-600 mb-6">Track what you've watched and discover what's next</p>
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <button
-              onClick={() => setIsFormOpen(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
-            >
-              <Plus size={20} />
-              Add New Movie
-            </button>
-            <button
-              onClick={() => setIsImdbImportOpen(true)}
-              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
-            >
-              <Film size={20} />
-              Import from IMDb
-            </button>
-          </div>
-        </header>
+    <div className="min-h-screen relative bg-gradient-to-b from-black to-gray-900 flex">
+      <div className="absolute bg-gradient-to-b from-black to-gray-900 backdrop-blur-2xl inset-0"></div>
+      {/* Sidebar */}
+      <Sidebar activeView={activeView} onViewChange={setActiveView} />
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <p className="font-semibold">Error: {error}</p>
-            <button
-              onClick={loadMovies}
-              className="mt-2 text-sm underline hover:no-underline"
-            >
-              Try again
-            </button>
-          </div>
-        )}
+      {/* Main Content */}
+      <div className="flex-1 ml-64 z-10">
+        <div className="container mx-auto px-8 py-8 ">
+          {error && (
+            <div className="glass-card border-red-500/30 text-white px-4 py-3 rounded-xl mb-6">
+              <p className="font-semibold">Error: {error}</p>
+              <button
+                onClick={loadMovies}
+                className="mt-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Try again
+              </button>
+            </div>
+          )}
 
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 size={48} className="text-blue-600 animate-spin" />
-            <span className="ml-3 text-gray-600">Loading movies...</span>
-          </div>
-        ) : (
-          <>
-            <MovieForm
-              isOpen={isFormOpen}
-              onClose={() => setIsFormOpen(false)}
-              onAddMovie={handleAddMovie}
-            />
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 size={48} className="text-blue-500 animate-spin" />
+              <span className="ml-3 text-slate-400">Loading movies...</span>
+            </div>
+          ) : (
+            <>
+              <MovieForm
+                isOpen={isFormOpen}
+                onClose={() => setIsFormOpen(false)}
+                onAddMovie={handleAddMovie}
+              />
 
-            <ImdbImport
-              isOpen={isImdbImportOpen}
-              onClose={() => setIsImdbImportOpen(false)}
-              onImportSuccess={handleImdbImportSuccess}
-            />
+              <ImdbImport
+                isOpen={isImdbImportOpen}
+                onClose={() => setIsImdbImportOpen(false)}
+                onImportSuccess={handleImdbImportSuccess}
+              />
 
-            <MovieList
-              movies={movies}
-              onToggleWatched={handleToggleWatched}
-              onUpdateReview={handleUpdateReview}
-              onDelete={handleDelete}
-            />
-          </>
-        )}
+              {renderView()}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
