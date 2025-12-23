@@ -55,16 +55,7 @@ function HomePage({
     });
   }, [movies, searchQuery, typeFilter, genreFilter, ratingFilter]);
 
-  // Get recently added (last 10, sorted by created_at)
-  const recentMovies = useMemo(() => {
-    return [...movies]
-      .sort((a, b) => {
-        const dateA = new Date(a.created_at || 0);
-        const dateB = new Date(b.created_at || 0);
-        return dateB - dateA;
-      })
-      .slice(0, 10);
-  }, [movies]);
+  
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -96,14 +87,14 @@ function HomePage({
         <div className="flex gap-3">
           <button
             onClick={onAddMovieClick}
-            className="inline-flex items-center gap-2 bg-blue-950/90 hover:bg-blue-950/90 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="inline-flex items-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus size={20} />
             Add Movie / Series
           </button>
           <button
             onClick={onImportClick}
-            className="inline-flex items-center gap-2 bg-blue-950/90 hover:bg-blue-950/90 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="inline-flex items-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Film size={20} />
             Import from IMDb
@@ -182,26 +173,6 @@ function HomePage({
           </div>
         </div>
       </div>
-
-      {/* Recent Added - Horizontal Scroll */}
-      {recentMovies.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-4">Recent Added</h2>
-          <div className="overflow-x-auto pb-4 scrollbar-hide">
-            <div className="flex gap-4" style={{ width: 'max-content' }}>
-              {recentMovies.map(movie => (
-                <div key={movie.id} className="flex-shrink-0" style={{ width: '200px' }}>
-                  <CompactMovieCard
-                    movie={movie}
-                    onToggleWatched={onToggleWatched}
-                    onDelete={onDelete}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* My Collection Grid */}
       <div>

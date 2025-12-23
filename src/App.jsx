@@ -184,9 +184,10 @@ function App() {
     }
   };
 
+
   return (
-    <div className="min-h-screen relative bg-gradient-to-b from-black to-gray-900 flex">
-      <div className="absolute bg-gradient-to-b from-black to-gray-900 backdrop-blur-2xl inset-0"></div>
+    <div className="min-h-screen bg-[url('./assets/bg.jpg')] bg-cover bg-no-repeat  flex">
+
       {/* Sidebar */}
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
 
