@@ -87,52 +87,54 @@ function HomePage({
             />
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={onAddMovieClick}
-            className="inline-flex items-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 text-sm sm:text-base"
           >
-            <Plus size={20} />
-            Add Movie / Series
+            <Plus size={18} className="sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">Add Movie / Series</span>
+            <span className="sm:hidden">Add</span>
           </button>
           <button
             onClick={onImportClick}
-            className="inline-flex items-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 bg-white/60 hover:bg-white/60 cursor-pointer font-semibold py-3 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 text-sm sm:text-base"
           >
-            <Film size={20} />
-            Import from IMDb
+            <Film size={18} className="sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">Import from IMDb</span>
+            <span className="sm:hidden">Import</span>
           </button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="glass-card rounded-xl p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
-          <div className="text-3xl font-bold text-white">{stats.total}</div>
-          <div className="text-sm text-white/70 mt-1">Total</div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+        <div className="glass-card rounded-xl p-3 sm:p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
+          <div className="text-2xl sm:text-3xl font-bold text-white">{stats.total}</div>
+          <div className="text-xs sm:text-sm text-white/70 mt-1">Total</div>
         </div>
-        <div className="glass-card rounded-xl p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
-          <div className="text-3xl font-bold text-white">{stats.watched}</div>
-          <div className="text-sm text-white/70 mt-1">Watched</div>
+        <div className="glass-card rounded-xl p-3 sm:p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
+          <div className="text-2xl sm:text-3xl font-bold text-white">{stats.watched}</div>
+          <div className="text-xs sm:text-sm text-white/70 mt-1">Watched</div>
         </div>
-        <div className="glass-card rounded-xl p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
-          <div className="text-3xl font-bold text-white">{stats.unwatched}</div>
-          <div className="text-sm text-white/70 mt-1">To Watch</div>
+        <div className="glass-card rounded-xl p-3 sm:p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
+          <div className="text-2xl sm:text-3xl font-bold text-white">{stats.unwatched}</div>
+          <div className="text-xs sm:text-sm text-white/70 mt-1">To Watch</div>
         </div>
-        <div className="glass-card rounded-xl p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
-          <div className="text-3xl font-bold text-white">{stats.movies}</div>
-          <div className="text-sm text-white/70 mt-1">Movies</div>
+        <div className="glass-card rounded-xl p-3 sm:p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
+          <div className="text-2xl sm:text-3xl font-bold text-white">{stats.movies}</div>
+          <div className="text-xs sm:text-sm text-white/70 mt-1">Movies</div>
         </div>
-        <div className="glass-card rounded-xl p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
-          <div className="text-3xl font-bold text-white">{stats.series}</div>
-          <div className="text-sm text-white/70 mt-1">Series</div>
+        <div className="glass-card rounded-xl p-3 sm:p-4 text-center hover:glass-strong transition-all duration-300 hover:scale-105">
+          <div className="text-2xl sm:text-3xl font-bold text-white">{stats.series}</div>
+          <div className="text-xs sm:text-sm text-white/70 mt-1">Series</div>
         </div>
       </div>
 
       {/* Filters */}
       <div className="glass rounded-xl p-4">
-        <div className="flex w-full gap-4">
-          <div className="w-1/3">
+        <div className="flex flex-col sm:flex-row w-full gap-4">
+          <div className="w-full sm:w-1/3">
             <label className="block text-sm text-white/70 mb-2">Type</label>
             <select
               value={typeFilter}
@@ -145,7 +147,7 @@ function HomePage({
             </select>
           </div>
 
-          <div className="w-1/3">
+          <div className="w-full sm:w-1/3">
             <label className="block text-sm text-white/70 mb-2">Genre</label>
             <select
               value={genreFilter}
@@ -159,7 +161,7 @@ function HomePage({
             </select>
           </div>
 
-          <div className="w-1/3">
+          <div className="w-full sm:w-1/3">
             <label className="block text-sm text-white/70 mb-2">Rating</label>
             <select
               value={ratingFilter}
@@ -179,7 +181,7 @@ function HomePage({
 
       {/* My Collection Grid */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-6">My Collection</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">My Collection</h2>
         {filteredMovies.length === 0 ? (
           <div className="glass-strong rounded-2xl p-12 text-center">
             <Film size={48} className="mx-auto text-white/70 mb-4" />
@@ -187,7 +189,7 @@ function HomePage({
             <p className="text-white/70 text-sm mt-2">Try adjusting your filters or add a new movie/series</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredMovies.map(movie => (
               <MovieCard
                 key={movie.id}

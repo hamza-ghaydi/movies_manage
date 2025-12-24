@@ -32,10 +32,10 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode 
   if (viewMode === 'list') {
     return (
       <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-4 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_8px_32px_rgba(59,130,246,0.3)] hover:scale-[1.01]">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           {/* Poster - Smaller in list view */}
           {movie.poster && (
-            <div className="w-24 h-36 flex-shrink-0 overflow-hidden rounded-lg relative group">
+            <div className="w-full sm:w-24 h-48 sm:h-36 shrink-0 overflow-hidden rounded-lg relative group mx-auto sm:mx-0">
               <img 
                 src={movie.poster} 
                 alt={`${movie.title} poster`}

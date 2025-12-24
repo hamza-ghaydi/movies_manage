@@ -44,12 +44,12 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/5 80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full">
-        <div className="flex items-center rounded-t-2xl justify-between sticky top-0 glass p-6">
-          <div className="flex items-center gap-3">
-            <Film size={24} className="text-blue-700" />
-            <h2 className="text-2xl font-bold text-white">Import from IMDb</h2>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-4">
+        <div className="flex items-center rounded-t-2xl justify-between sticky top-0 glass p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Film size={20} className="sm:w-6 sm:h-6 text-blue-700" />
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Import from IMDb</h2>
           </div>
           <button
             onClick={handleClose}
@@ -60,7 +60,7 @@ function ImdbImport({ isOpen, onClose, onImportSuccess }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
           <div className="mb-4">
             <label className="block text-sm font-medium text-white mb-2">
               IMDb Link or ID

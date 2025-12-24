@@ -56,7 +56,7 @@ function MovieForm({ isOpen, onClose, onAddMovie }) {
 
   return (
     <div className="fixed inset-0 bg-black/5 bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="glass-strong rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-4">
         <div className="flex items-center justify-between sticky top-0 glass border-b border-[#db0000] border-opacity-20 p-6">
           <h2 className="text-2xl font-bold text-white">Add New Movie or Series</h2>
           <button

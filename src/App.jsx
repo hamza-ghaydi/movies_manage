@@ -6,7 +6,7 @@ import HomePage from './components/HomePage';
 import WatchedPage from './components/WatchedPage';
 import ToWatchPage from './components/ToWatchPage';
 import { fetchMovies, createMovie, updateMovie, deleteMovie } from './utils/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Menu } from 'lucide-react';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -15,6 +15,7 @@ function App() {
   const [isImdbImportOpen, setIsImdbImportOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Fetch movies on component mount
   useEffect(() => {
@@ -186,14 +187,35 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-[url('./assets/bg.jpg')] bg-cover bg-no-repeat  flex">
+    <div className="min-h-screen bg-[url('./assets/bg.jpg')] bg-cover bg-no-repeat flex">
+
+      {/* Mobile Menu Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* Sidebar */}
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar 
+        activeView={activeView} 
+        onViewChange={setActiveView}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 z-10">
-        <div className="container mx-auto px-8 py-8 ">
+      <div className="flex-1 lg:ml-72 z-10 w-full lg:w-auto">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="lg:hidden fixed top-4 left-4 z-40 glass p-2 rounded-lg text-white hover:bg-white/20 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <Menu size={24} />
+          </button>
           {error && (
             <div className="glass-card border-red-500/30 text-white px-4 py-3 rounded-xl mb-6">
               <p className="font-semibold">Error: {error}</p>
