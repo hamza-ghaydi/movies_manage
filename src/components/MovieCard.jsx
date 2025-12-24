@@ -4,6 +4,7 @@ import { Star, Film, Tv, Edit2, Save, X } from 'lucide-react';
 function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode = 'grid' }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedReview, setEditedReview] = useState(movie.review);
+  const [isReviewExpanded, setIsReviewExpanded] = useState(false);
 
   const handleSaveReview = () => {
     onUpdateReview(movie.id, editedReview);
@@ -13,6 +14,7 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode 
   const handleCancelEdit = () => {
     setEditedReview(movie.review);
     setIsEditing(false);
+    setIsReviewExpanded(false);
   };
 
   const getPriorityColor = (priority) => {
@@ -142,9 +144,25 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode 
                       <Edit2 size={14} />
                     </button>
                   </div>
-                  <p className="text-white text-sm line-clamp-2">
-                    {movie.review || 'No review yet...'}
-                  </p>
+                  {movie.review ? (
+                    <div>
+                      <p className="text-white text-sm">
+                        {isReviewExpanded || movie.review.length <= 50
+                          ? movie.review
+                          : `${movie.review.slice(0, 50)}...`}
+                      </p>
+                      {movie.review.length > 50 && (
+                        <button
+                          onClick={() => setIsReviewExpanded(!isReviewExpanded)}
+                          className="text-blue-400 hover:text-blue-300 text-xs mt-1 transition-colors"
+                        >
+                          {isReviewExpanded ? 'Read less' : 'Read more'}
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-white text-sm">No review yet...</p>
+                  )}
                 </div>
               )}
             </div>
@@ -269,7 +287,7 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode 
         ) : (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-medium text-slate-400">Review:</span>
+              <span className="text-sm font-medium text-slate-400">Resume:</span>
               <button
                 onClick={() => setIsEditing(true)}
                 className="text-blue-400 hover:text-blue-300 transition-colors"
@@ -278,9 +296,25 @@ function MovieCard({ movie, onToggleWatched, onUpdateReview, onDelete, viewMode 
                 <Edit2 size={16} />
               </button>
             </div>
-            <p className="text-white text-sm line-clamp-3">
-              {movie.review || 'No review yet...'}
-            </p>
+            {movie.review ? (
+              <div>
+                <p className="text-white text-sm">
+                  {isReviewExpanded || movie.review.length <= 50
+                    ? movie.review
+                    : `${movie.review.slice(0, 50)}...`}
+                </p>
+                {movie.review.length > 50 && (
+                  <button
+                    onClick={() => setIsReviewExpanded(!isReviewExpanded)}
+                    className="text-blue-400 hover:text-blue-300 text-xs mt-1 transition-colors"
+                  >
+                    {isReviewExpanded ? 'Read less' : 'Read more'}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <p className="text-white text-sm">No review yet...</p>
+            )}
           </div>
         )}
       </div>

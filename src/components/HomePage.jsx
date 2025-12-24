@@ -27,9 +27,12 @@ function HomePage({
     return Array.from(genres).sort();
   }, [movies]);
 
-  // Filter movies
+  // Filter movies - only show unwatched movies in collection
   const filteredMovies = useMemo(() => {
     return movies.filter(movie => {
+      // Only show unwatched movies in the collection
+      const isUnwatched = !movie.watched;
+
       // Search filter
       const matchesSearch = !searchQuery || 
         movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,7 +54,7 @@ function HomePage({
         (ratingFilter !== 'all' && ratingFilter !== 'rated' && ratingFilter !== 'unrated' && 
          movie.rating && movie.rating >= parseInt(ratingFilter));
 
-      return matchesSearch && matchesType && matchesGenre && matchesRating;
+      return isUnwatched && matchesSearch && matchesType && matchesGenre && matchesRating;
     });
   }, [movies, searchQuery, typeFilter, genreFilter, ratingFilter]);
 
